@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 
-import osvenv/
-__pycache__/
-db.sqlite3
-.env
-staticfiles/
+import os
 import sys
 
 
