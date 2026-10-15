@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Agência de Viagens Horizonte</title>
+    <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50 text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-sky-500 to-indigo-600 text-white p-6 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold tracking-tight">✈️ Agência Horizonte</h1>
+            <p class="text-sm opacity-90">Planeje seu destino com a previsão certa.</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6 space-y-10">
+        
+        <!-- Bloco de Clima -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-sky-100">
+            <h2 class="text-xl font-bold text-indigo-900 mb-4">🌦️ Consulte o clima do seu próximo destino</h2>
+            <form method="get" class="flex gap-2">
+                <input type="text" name="clima_cidade" placeholder="Ex: Rio de Janeiro" class="border border-slate-300 rounded-lg p-2 flex-1 focus:outline-sky-500">
+                <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-lg font-medium transition">Consultar</button>
+            </form>
+
+            {% if clima_info %}
+                <div class="mt-4 p-4 bg-sky-50 rounded-xl border border-sky-200">
+                    <p class="text-lg font-semibold text-sky-950">Previsão para {{ clima_info.cidade }}:</p>
+                    <p class="text-sm text-slate-600">{{ clima_info.descricao }}</p>
+                    <p class="text-xl font-bold text-orange-600">🌡️ Máx: {{ clima_info.temp_max }}°C | Mín: {{ clima_info.temp_min }}°C</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Catálogo de Viagens -->
+        <section>
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">Explore Nossas Disponibilidades</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for pacote in pacotes %}
+                    <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100 flex flex-col">
+                        {% if pacote.foto %}
+                            <img src="{{ pacote.foto.url }}" alt="{{ pacote.cidade }}" class="h-48 w-full object-cover">
+                        {% endif %}
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded">Período: {{ pacote.data_inicio|date:"d/m" }} a {{ pacote.data_fim|date:"d/m/Y" }}</span>
+                                <h3 class="text-xl font-bold text-slate-900 mt-2">{{ pacote.cidade }}, {{ pacote.pais }}</h3>
+                                <p class="text-slate-600 text-sm mt-1 line-clamp-3">{{ pacote.descricao }}</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-2xl font-black text-indigo-600">R$ {{ pacote.preco }}</p>
+                                    <p class="text-xs text-slate-500 font-medium">{{ pacote.vagas_disponiveis }} vagas restando</p>
+                                </div>
+                                <a href="{% url 'realizar_reserva' pacote.id %}" class="block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition shadow-sm">Reservar Período</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-slate-500 col-span-3 text-center py-10">Nenhum destino cadastrado pelo administrador ainda.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Histórico do Usuário -->
+        {% if historico %}
+        <section class="bg-slate-100 p-6 rounded-2xl">
+            <h3 class="font-bold text-slate-700 mb-3">Seu histórico recente de buscas climáticas:</h3>
+            <ul class="space-y-2">
+                {% for item in historico %}
+                    <li class="text-sm bg-white p-2 rounded shadow-sm flex justify-between">
+                        <span>📍 <strong>{{ item.cidade_buscada }}</strong> ({{ item.condicao }})</span>
+                        <span class="text-slate-500">{{ item.temperatura }} - {{ item.data_pesquisa|date:"d/m H:i" }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+    </main>
+</body>
+</html>
